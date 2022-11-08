@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, GradientBoostingRegressor, \
+    HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, RepeatedStratifiedKFold
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
@@ -79,6 +81,33 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     print("*************************")
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
+
+    knnTrainScores = []
+    knnTestScores = []
+
+    for i in range(1, 20):
+        knnClassifier = KNeighborsClassifier(i)
+        knnClassifier.fit(X_train, y_train)
+
+        knnTrainScores.append(knnClassifier.score(X_train, y_train))
+        knnTestScores.append(knnClassifier.score(X_test, y_test))
+
+    bestTrainIndex = knnTrainScores.index(max(knnTrainScores))
+    bestTestIndex = knnTestScores.index(max(knnTestScores))
+
+    print(
+        'Max train score {} with k = {} and test score = {}'.format(knnTrainScores[bestTrainIndex], bestTrainIndex + 1,
+                                                                    knnTestScores[bestTrainIndex]))
+    print('Max test score {} with k = {} and train score = {}'.format(knnTestScores[bestTestIndex], bestTestIndex + 1,
+                                                                      knnTrainScores[bestTestIndex]))
+
+    gradientBoostingClassifier = GradientBoostingClassifier()
+    gradientBoostingClassifier.fit(X_train, y_train)
+    print(gradientBoostingClassifier.score(X_test, y_test))
+
+    histogramGraidentClassifier = HistGradientBoostingClassifier()
+    histogramGraidentClassifier.fit(X_train, y_train)
+    print(histogramGraidentClassifier.score(X_test, y_test))
 
 
 def main():
