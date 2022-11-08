@@ -1,17 +1,18 @@
-import pandas as pd
-import numpy as np
+import warnings
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import cross_val_score
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
-import warnings
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
 
 warnings.filterwarnings("ignore")
 
@@ -19,7 +20,7 @@ warnings.filterwarnings("ignore")
 def get_dataset_informatin(csv_file="diabetes.csv"):
     data = csv_file
     print(data.head())
-    print("Shaper Of Data: ",  data.shape)
+    print("Shaper Of Data: ", data.shape)
     print("Feature ------------------------ Type")
     print(data.dtypes)
     for column in data.columns:
@@ -44,7 +45,7 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
 
     X = data.iloc[:, 1:data.shape[1]].values
     y = data.iloc[:, 0].values
-    X_train, X_test, y_train, y_test= train_test_split(X, y, test_size=0.3, random_state=12345 , shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=12345, shuffle=True)
 
     pipeline = make_pipeline(StandardScaler(), RandomForestClassifier(n_estimators=100, max_depth=4))
     scores = cross_val_score(pipeline, X=X_train, y=y_train, cv=10, n_jobs=5)
@@ -53,7 +54,7 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
 
     forest = RandomForestClassifier(n_estimators=10, criterion="entropy", random_state=0)
     forest.fit(X_train, y_train)
-    print("Accuracy:" , forest.score(X_train, y_train) * 100)
+    print("Accuracy:", forest.score(X_train, y_train) * 100)
     cm = confusion_matrix(y_test, forest.predict(X_test))
 
     TN = cm[0][0]
@@ -64,7 +65,7 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     print(cm)
     print((TP + TN) / (TP + TN + FP + FN))
 
-    model = LogisticRegression(solver='liblinear', C=0.05, multi_class='ovr',random_state=0)
+    model = LogisticRegression(solver='liblinear', C=0.05, multi_class='ovr', random_state=0)
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 
