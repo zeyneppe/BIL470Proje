@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, HistGradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, HistGradientBoostingClassifier, \
+    AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import cross_val_score
@@ -44,6 +45,8 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     data["Age_Years"] = data["Age"]
     data = data.drop("Age", axis=1)
 
+    # X = data.drop('Outcome', axis=1)
+    # y = data.Outcome
     X = data.iloc[:, 1:data.shape[1]].values
     y = data.iloc[:, 0].values
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=12345, shuffle=True)
@@ -104,9 +107,9 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     gradientBoostingClassifier.fit(X_train, y_train)
     print(gradientBoostingClassifier.score(X_test, y_test))
 
-    histogramGraidentClassifier = HistGradientBoostingClassifier()
-    histogramGraidentClassifier.fit(X_train, y_train)
-    print(histogramGraidentClassifier.score(X_test, y_test))
+    histogramGradientClassifier = HistGradientBoostingClassifier()
+    histogramGradientClassifier.fit(X_train, y_train)
+    print(histogramGradientClassifier.score(X_test, y_test))
 
 
 def main():
