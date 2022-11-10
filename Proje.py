@@ -15,6 +15,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 
 warnings.filterwarnings("ignore")
 
@@ -105,11 +106,24 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
 
     gradientBoostingClassifier = GradientBoostingClassifier()
     gradientBoostingClassifier.fit(X_train, y_train)
-    print(gradientBoostingClassifier.score(X_test, y_test))
+    print("\nAccuracy with GradientBoostingClassifier: ", gradientBoostingClassifier.score(X_test, y_test))
 
     histogramGradientClassifier = HistGradientBoostingClassifier()
     histogramGradientClassifier.fit(X_train, y_train)
-    print(histogramGradientClassifier.score(X_test, y_test))
+    print("\nAccuracy with HistGradientBoostingClassifier: ", histogramGradientClassifier.score(X_test, y_test))
+
+    adaBoostClassifier = AdaBoostClassifier()
+    adaBoostClassifier.fit(X_train, y_train)
+    print()
+    print("\nAccuracy with AdaBoostClassifier: ", adaBoostClassifier.score(X_test, y_test))
+
+    randomForestClassifier = RandomForestClassifier(random_state=12345)
+    randomForestClassifier.fit(X_train, y_train)
+    print("\nAccuracy with RandomForestClassifier: ", randomForestClassifier.score(X_test, y_test))
+
+    decisionTreeClassifier = DecisionTreeClassifier(random_state=12345)
+    decisionTreeClassifier.fit(X_train, y_train)
+    print("\nAccuracy with DecisionTreeClassifier: ", decisionTreeClassifier.score(X_test, y_test))
 
 
 def main():
