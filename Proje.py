@@ -15,6 +15,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 
 warnings.filterwarnings("ignore")
 
@@ -105,11 +106,43 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
 
     gradientBoostingClassifier = GradientBoostingClassifier()
     gradientBoostingClassifier.fit(X_train, y_train)
-    print(gradientBoostingClassifier.score(X_test, y_test))
+    y_pred = gradientBoostingClassifier.predict(X_test)
+    print("\nTrain Accuracy with GradientBoostingClassifier: ", gradientBoostingClassifier.score(X_train, y_train))
+    print("Test Accuracy with GradientBoostingClassifier:  ", gradientBoostingClassifier.score(X_test, y_test))
+    print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
 
     histogramGradientClassifier = HistGradientBoostingClassifier()
     histogramGradientClassifier.fit(X_train, y_train)
-    print(histogramGradientClassifier.score(X_test, y_test))
+    y_pred = histogramGradientClassifier.predict(X_test)
+    print("\nTrain Accuracy with HistGradientBoostingClassifier: ", histogramGradientClassifier.score(X_train, y_train))
+    print("Test Accuracy with HistGradientBoostingClassifier:  ", histogramGradientClassifier.score(X_test, y_test))
+    print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+
+    adaBoostClassifier = AdaBoostClassifier()
+    adaBoostClassifier.fit(X_train, y_train)
+    y_pred = adaBoostClassifier.predict(X_test)
+    print("\nTrain Accuracy with AdaBoostClassifier: ", adaBoostClassifier.score(X_train, y_train))
+    print("Test Accuracy with AdaBoostClassifier:  ", adaBoostClassifier.score(X_test, y_test))
+    print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+
+    randomForestClassifier = RandomForestClassifier(random_state=12345)
+    randomForestClassifier.fit(X_train, y_train)
+    y_pred = randomForestClassifier.predict(X_test)
+    print("\nTrain Accuracy with RandomForestClassifier: ", randomForestClassifier.score(X_train, y_train))
+    print("Test Accuracy with RandomForestClassifier:  ", randomForestClassifier.score(X_test, y_test))
+    print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+
+    decisionTreeClassifier = DecisionTreeClassifier(random_state=12345)
+    decisionTreeClassifier.fit(X_train, y_train)
+    y_pred = decisionTreeClassifier.predict(X_test)
+    print("\nTrain Accuracy with DecisionTreeClassifier: ", decisionTreeClassifier.score(X_train, y_train))
+    print("Test Accuracy with DecisionTreeClassifier:  ", decisionTreeClassifier.score(X_test, y_test))
+    print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
 
 
 def main():
