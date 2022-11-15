@@ -46,10 +46,10 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     data["Age_Years"] = data["Age"]
     data = data.drop("Age", axis=1)
 
-    # X = data.drop('Outcome', axis=1)
-    # y = data.Outcome
-    X = data.iloc[:, 1:data.shape[1]].values
-    y = data.iloc[:, 0].values
+    X = data.drop('Outcome', axis=1)
+    y = data.Outcome
+    # X = data.iloc[:, 1:data.shape[1]].values
+    # y = data.iloc[:, 0].values
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=12345, shuffle=True)
 
     pipeline = make_pipeline(StandardScaler(), RandomForestClassifier(n_estimators=100, max_depth=4))
@@ -76,12 +76,14 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
 
     print(model.score(X_train, y_train))
     print(model.score(X_test, y_test))
+    print(classification_report(y_test, y_pred))
 
     svclassifier = SVC(kernel='linear')
     svclassifier.fit(X_train, y_train)
     y_pred = svclassifier.predict(X_test)
 
     print("*************************")
+    print(svclassifier.score(X_train, y_train))
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
 
@@ -103,6 +105,10 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
                                                                     knnTestScores[bestTrainIndex]))
     print('Max test score {} with k = {} and train score = {}'.format(knnTestScores[bestTestIndex], bestTestIndex + 1,
                                                                       knnTrainScores[bestTestIndex]))
+    knnClassifier = KNeighborsClassifier(bestTestIndex + 1)
+    knnClassifier.fit(X_train, y_train)
+    y_pred = svclassifier.predict(X_test)
+    print(classification_report(y_test, y_pred))
 
     gradientBoostingClassifier = GradientBoostingClassifier()
     gradientBoostingClassifier.fit(X_train, y_train)
