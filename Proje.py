@@ -34,7 +34,7 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
             print(str(column) + " : " + str(data[column].unique()))
             print(data[column].value_counts())
             print("________________________________________________________")
-    print("Corralation")
+    print("Correlation")
     correlation = data.corr()
     print(correlation)
     print("Loading Heatmap...")
