@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import shap
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, HistGradientBoostingClassifier, \
     AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
@@ -11,14 +14,12 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.cluster import KMeans
-from sklearn.neural_network import MLPClassifier
-from sklearn.decomposition import PCA
 
 warnings.filterwarnings("ignore")
 
@@ -152,8 +153,13 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     print("Test Accuracy with DecisionTreeClassifier:  ", decisionTreeClassifier.score(X_test, y_test))
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
-    
-     kmeans = KMeans(n_clusters=3)
+
+    explainer = shap.TreeExplainer(gradientBoostingClassifier)
+    shap_values = explainer.shap_values(X_train)
+
+    shap.summary_plot(shap_values, X_train)
+
+    kmeans = KMeans(n_clusters=3)
     k_fit = kmeans.fit(X)
     kumeler = k_fit.labels_
     plt.scatter(X[:, 0], X[:, 1], c=kumeler, s=40, cmap='viridis');
@@ -162,15 +168,13 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     labels = kmeans.fit(X).predict(X)
     plt.scatter(X[:, 0], X[:, 1], c=labels, s=40, cmap='viridis');
 
-    mlpc = MLPClassifier().fit(X_train,y_train)
+    mlpc = MLPClassifier().fit(X_train, y_train)
     y_pred = mlpc.predict(X_test)
-    accuracy_score(y_test,y_pred)
-
+    accuracy_score(y_test, y_pred)
 
     pca = PCA(n_components=2)
     X_train = pca.fit_transform(X_train)
     X_test = pca.fit_transform(X_test)
-
 
 
 def main():
