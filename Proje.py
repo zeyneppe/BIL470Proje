@@ -155,6 +155,32 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
 
+    kmeans = KMeans(n_clusters=2)
+    kmeans.fit(X_train, y_train)
+    y_pred = kmeans.predict(X_test)
+    print("\nAccuracy with KMeans: ", accuracy_score(y_test, kmeans.predict(X_test)))
+    print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+
+    mlpClassifier = MLPClassifier()
+    mlpClassifier.fit(X_train, y_train)
+    y_pred = mlpClassifier.predict(X_test)
+    print("\nTrain Accuracy with MLPClassifier: ", mlpClassifier.score(X_train, y_train))
+    print("Test Accuracy with MLPClassifier:  ", mlpClassifier.score(X_test, y_test))
+    print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+
+    pca = PCA(n_components=2)
+    X_train2 = pca.fit_transform(X_train)
+    X_test2 = pca.transform(X_test)
+    logisticRegression = LogisticRegression(random_state=12345)
+    logisticRegression.fit(X_train2, y_train)
+    y_pred = logisticRegression.predict(X_test2)
+    print("\nTrain Accuracy with LogisticRegression with PCA: ", logisticRegression.score(X_train2, y_train))
+    print("Test Accuracy with LogisticRegression with PCA:  ", logisticRegression.score(X_test2, y_test))
+    print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+
     explainer = shap.TreeExplainer(gradientBoostingClassifier)
     shap_values = explainer.shap_values(X_train)
 
@@ -186,24 +212,6 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     # the background dataset to the model output for this prediction
     shap.plots.waterfall(shap_values[25])
     plt.show()
-
-
-    kmeans = KMeans(n_clusters=3)
-    k_fit = kmeans.fit(X)
-    kumeler = k_fit.labels_
-    plt.scatter(X[:, 0], X[:, 1], c=kumeler, s=40, cmap='viridis')
-    identified_clusters = kmeans.fit_predict(X)
-
-    labels = kmeans.fit(X).predict(X)
-    plt.scatter(X[:, 0], X[:, 1], c=labels, s=40, cmap='viridis')
-
-    mlpc = MLPClassifier().fit(X_train, y_train)
-    y_pred = mlpc.predict(X_test)
-    accuracy_score(y_test, y_pred)
-
-    pca = PCA(n_components=2)
-    X_train = pca.fit_transform(X_train)
-    X_test = pca.fit_transform(X_test)
 
 
 def main():
