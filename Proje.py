@@ -187,6 +187,7 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     shap.plots.waterfall(shap_values[25])
     plt.show()
 
+
     kmeans = KMeans(n_clusters=3)
     k_fit = kmeans.fit(X)
     kumeler = k_fit.labels_
