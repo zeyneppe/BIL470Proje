@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import shap
+from lime import lime_tabular
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, HistGradientBoostingClassifier, \
@@ -50,7 +51,7 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     data["Age_Years"] = data["Age"]
     data = data.drop("Age", axis=1)
 
-    X = data.drop('Outcome', axis=1)
+    X = data.drop('Outcome', axis=1).drop('Pregnancies', axis=1)
     y = data.Outcome
     # X = data.iloc[:, 1:data.shape[1]].values
     # y = data.iloc[:, 0].values
@@ -94,7 +95,7 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     knnTrainScores = []
     knnTestScores = []
 
-    for i in range(1, 20):
+    for i in range(1, 30):
         knnClassifier = KNeighborsClassifier(i)
         knnClassifier.fit(X_train, y_train)
 
@@ -157,16 +158,35 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     explainer = shap.TreeExplainer(gradientBoostingClassifier)
     shap_values = explainer.shap_values(X_train)
 
-    shap.summary_plot(shap_values, X_train)
+    explainer = lime_tabular.LimeTabularExplainer(X_train.values, feature_names=X_train.columns.values.tolist(),
+                                                  class_names=[0, 1], verbose=True, mode='classification')
+
+    print("Predicted Value: " + str(adaBoostClassifier.predict(X_test.values)[0]))
+    exp = explainer.explain_instance(
+        data_row=X_test.values[0],
+        predict_fn=adaBoostClassifier.predict_proba,
+        num_features=7
+    )
+
+    exp.show_in_notebook(show_table=True)
+
+    print("Predicted Value: " + str(adaBoostClassifier.predict(X_test.values)[217]))
+    exp = explainer.explain_instance(
+        data_row=X_test.values[217],
+        predict_fn=adaBoostClassifier.predict_proba,
+        num_features=7
+    )
+
+    exp.show_in_notebook(show_table=True)
 
     kmeans = KMeans(n_clusters=3)
     k_fit = kmeans.fit(X)
     kumeler = k_fit.labels_
-    plt.scatter(X[:, 0], X[:, 1], c=kumeler, s=40, cmap='viridis');
+    plt.scatter(X[:, 0], X[:, 1], c=kumeler, s=40, cmap='viridis')
     identified_clusters = kmeans.fit_predict(X)
 
     labels = kmeans.fit(X).predict(X)
-    plt.scatter(X[:, 0], X[:, 1], c=labels, s=40, cmap='viridis');
+    plt.scatter(X[:, 0], X[:, 1], c=labels, s=40, cmap='viridis')
 
     mlpc = MLPClassifier().fit(X_train, y_train)
     y_pred = mlpc.predict(X_test)
