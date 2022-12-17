@@ -42,7 +42,7 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     print("Loading Heatmap...")
     plt.figure(figsize=(15, 15))
     sns.heatmap(correlation, annot=True, fmt=".0%")
-    # plt.show()
+    plt.show()
 
     for column in data.columns:
         if data[column].dtype == np.number:
@@ -178,6 +178,14 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     )
 
     exp.show_in_notebook(show_table=True)
+
+    explainer = shap.Explainer(gradientBoostingClassifier, X_train)
+    shap_values = explainer(X_train)
+
+    # contribution of each feature moves the value from the expected model output over
+    # the background dataset to the model output for this prediction
+    shap.plots.waterfall(shap_values[25])
+    plt.show()
 
     kmeans = KMeans(n_clusters=3)
     k_fit = kmeans.fit(X)
