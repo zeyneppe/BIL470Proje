@@ -1,3 +1,4 @@
+import pickle
 import warnings
 
 import matplotlib.pyplot as plt
@@ -51,7 +52,7 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     data["Age_Years"] = data["Age"]
     data = data.drop("Age", axis=1)
 
-    X = data.drop('Outcome', axis=1).drop('Pregnancies', axis=1)
+    X = data.drop('Outcome', axis=1)  # .drop('Pregnancies', axis=1)
     y = data.Outcome
     # X = data.iloc[:, 1:data.shape[1]].values
     # y = data.iloc[:, 0].values
@@ -173,6 +174,7 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     pca = PCA(n_components=2)
     X_train2 = pca.fit_transform(X_train)
     X_test2 = pca.transform(X_test)
+
     logisticRegression = LogisticRegression(random_state=12345)
     logisticRegression.fit(X_train2, y_train)
     y_pred = logisticRegression.predict(X_test2)
@@ -181,37 +183,43 @@ def get_dataset_informatin(csv_file="diabetes.csv"):
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
 
-    explainer = shap.TreeExplainer(gradientBoostingClassifier)
-    shap_values = explainer.shap_values(X_train)
-
     explainer = lime_tabular.LimeTabularExplainer(X_train.values, feature_names=X_train.columns.values.tolist(),
                                                   class_names=[0, 1], verbose=True, mode='classification')
 
-    print("Predicted Value: " + str(adaBoostClassifier.predict(X_test.values)[0]))
+    print("Predicted Value: " + str(gradientBoostingClassifier.predict(X_test.values)[0]))
     exp = explainer.explain_instance(
         data_row=X_test.values[0],
-        predict_fn=adaBoostClassifier.predict_proba,
+        predict_fn=gradientBoostingClassifier.predict_proba,
         num_features=7
     )
 
     exp.show_in_notebook(show_table=True)
 
-    print("Predicted Value: " + str(adaBoostClassifier.predict(X_test.values)[217]))
+    print("Predicted Value: " + str(gradientBoostingClassifier.predict(X_test.values)[217]))
     exp = explainer.explain_instance(
         data_row=X_test.values[217],
-        predict_fn=adaBoostClassifier.predict_proba,
+        predict_fn=gradientBoostingClassifier.predict_proba,
         num_features=7
     )
 
     exp.show_in_notebook(show_table=True)
 
-    explainer = shap.Explainer(gradientBoostingClassifier, X_train)
+    explainer = shap.TreeExplainer(gradientBoostingClassifier, X_train)
     shap_values = explainer(X_train)
 
     # contribution of each feature moves the value from the expected model output over
     # the background dataset to the model output for this prediction
     shap.plots.waterfall(shap_values[25])
     plt.show()
+
+    select = range(20)
+    features = X_test.iloc[select]
+    features_display = X_test.loc[features.index]
+
+    shap.decision_plot(explainer.expected_value, explainer.shap_values(X_train), features_display, link='logit')
+    plt.show()
+
+    pickle.dump(gradientBoostingClassifier, open("gradientBoost.sav", 'wb'))
 
 
 def main():
